@@ -35,6 +35,13 @@ Group=tomcat
 WantedBy=multi-user.target
 ----
 
+=== create the tomcat user
+
+---
+useradd tomcat
+---
+
+
 == Enable Tomcat to start at boot time
 
 ----
