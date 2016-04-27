@@ -1,0 +1,57 @@
+= Installing Apache Tomcat as linux service
+
+== Create the systemd configuration file
+
+----
+sudo vi /etc/systemd/system/Tomcat.service
+----
+
+And copy the following content into it.
+This assumes that you have a symlink to the unzipped Tomcat in `/opt/apache/tomcat`
+
+----
+# Systemd unit file for tomcat
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+Environment=JAVA_HOME=/usr/lib/jvm/jre
+Environment=CATALINA_PID=/opt/apache/tomcat/temp/tomcat.pid
+Environment=CATALINA_HOME=/opt/apache/tomcat
+Environment=CATALINA_BASE=/opt/apache/tomcat
+Environment='CATALINA_OPTS=-Xms128m -Xmx512M -server -XX:+UseParallelGC'
+Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+ExecStart=/opt/apache/tomcat/bin/catalina.sh start
+ExecStop=/bin/kill -15 $MAINPID
+
+User=tomcat
+Group=tomcat
+
+[Install]
+WantedBy=multi-user.target
+----
+
+== Enable Tomcat to start at boot time
+
+----
+sudo systemctl enable tomcat
+----
+
+== Control Tomcat manually
+
+To start Tomcat use
+
+----
+sudo systemctl start tomcat
+----
+
+
+To stop Tomcat use
+
+----
+sudo systemctl stop tomcat
+----
